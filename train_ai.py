@@ -18,7 +18,7 @@ def eval_genomes(genomes, config):
                 if event.type == pygame.QUIT:
                     quit()
             game_info = g.loop()
-            output = net.activate((g.p1.pos.y, game_info.ball_y, game_info.distance_from_p1))
+            output = net.activate((g.p1.pos.y - g.p1.size, g.p1.pos.y + g.p1.size, game_info.ball_y, game_info.distance_from_p1))
             decision = output.index(max(output))
             if decision == 0:
                 g.p1.move(7.5)
@@ -26,17 +26,18 @@ def eval_genomes(genomes, config):
                 g.p1.move(-7.5)
             if game_info.score != [0, 0]:
                 genome.fitness = g.hits
+                print(g.hits)
                 break
 
 def run_neat(config):
-    # p = neat.Population(config)
-    p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-49')
+    p = neat.Population(config)
+    # p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-49')
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
     p.add_reporter(neat.Checkpointer(5))
 
-    return p.run(eval_genomes, 1)
+    return p.run(eval_genomes, 50)
 
 
 if __name__ == "__main__":
